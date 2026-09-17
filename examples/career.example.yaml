@@ -1,0 +1,55 @@
+# Entirely fictional data. Real career.yaml belongs outside this repository.
+skills:
+  - name: Python
+    level: advanced
+    years: 4
+    evidence:
+      - id: python-api
+        type: project
+        reference: example-analytics-platform
+        description: Built backend APIs using Python for Example Analytics Platform.
+  - name: FastAPI
+    evidence:
+      - id: fastapi-endpoints
+        type: project
+        reference: example-analytics-platform
+        description: Implemented API endpoints with FastAPI.
+  - name: PostgreSQL
+    evidence:
+      - id: postgres-reporting
+        type: work_experience
+        reference: example-systems
+        description: Developed PostgreSQL queries for internal reporting.
+  - name: Docker
+    evidence:
+      - id: docker-dev
+        type: project
+        reference: example-analytics-platform
+        description: Packaged the development API environment with Docker.
+work_experience:
+  - id: example-systems
+    employer: Example Systems GmbH
+    title: Backend Developer
+    description: Worked on fictional internal analytics services.
+    responsibilities:
+      - Developed reporting queries.
+projects:
+  - id: example-analytics-platform
+    name: Example Analytics Platform
+    description: A fictional backend for example analytics reports.
+education:
+  - id: example-degree
+    institution: Example University
+    qualification: Example Bachelor of Computer Science
+languages:
+  - name: English
+    level: B2
+    evidence:
+      - id: english-self-report
+        type: self_report
+        reference: english-assessment
+        description: Self-reported English proficiency at B2.
+certifications:
+  - id: example-certificate
+    name: Example Software Fundamentals Certificate
+    issuer: Example Training Organization

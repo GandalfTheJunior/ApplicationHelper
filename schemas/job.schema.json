@@ -1,0 +1,173 @@
+{
+  "$defs": {
+    "LanguageRequirement": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "level": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Level"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "LanguageRequirement",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "company": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Company"
+    },
+    "title": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Title"
+    },
+    "location": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Location"
+    },
+    "remote_status": {
+      "default": "unknown",
+      "enum": [
+        "remote",
+        "hybrid",
+        "onsite",
+        "unknown"
+      ],
+      "title": "Remote Status",
+      "type": "string"
+    },
+    "source_url": {
+      "anyOf": [
+        {
+          "format": "uri",
+          "maxLength": 2083,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Url"
+    },
+    "description": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Description"
+    },
+    "responsibilities": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Responsibilities",
+      "type": "array"
+    },
+    "required_skills": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Required Skills",
+      "type": "array"
+    },
+    "preferred_skills": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Preferred Skills",
+      "type": "array"
+    },
+    "language_requirements": {
+      "items": {
+        "$ref": "#/$defs/LanguageRequirement"
+      },
+      "title": "Language Requirements",
+      "type": "array"
+    },
+    "seniority": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Seniority"
+    },
+    "employment_type": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Employment Type"
+    }
+  },
+  "title": "JobPosting",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

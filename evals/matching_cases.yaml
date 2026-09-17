@@ -1,0 +1,67 @@
+# Executed by tests/test_matching.py, using the fictional example profile.
+- id: exact_supported_skill
+  job:
+    required_skills: ["  PYTHON  "]
+  expected:
+    required_coverage: 1.0
+    preferred_coverage: null
+    matched: [PYTHON]
+    unsupported: []
+    selected_skills: [Python]
+- id: unsupported_skill_not_invented
+  job:
+    required_skills: [AWS]
+  expected:
+    required_coverage: 0.0
+    preferred_coverage: null
+    matched: []
+    unsupported: [AWS]
+    selected_skills: []
+- id: docker_is_not_kubernetes
+  job:
+    required_skills: [Kubernetes]
+    preferred_skills: [Docker]
+  expected:
+    required_coverage: 0.0
+    preferred_coverage: 1.0
+    matched: [Docker]
+    unsupported: [Kubernetes]
+    selected_skills: [Docker]
+- id: preferred_absence_does_not_reject_job
+  job:
+    required_skills: [Python]
+    preferred_skills: [AWS]
+  expected:
+    required_coverage: 1.0
+    preferred_coverage: 0.0
+    matched: [Python]
+    unsupported: [AWS]
+    selected_skills: [Python]
+- id: missing_identity_has_no_effect
+  job:
+    required_skills: [PostgreSQL]
+  expected:
+    required_coverage: 1.0
+    preferred_coverage: null
+    matched: [PostgreSQL]
+    unsupported: []
+    selected_skills: [PostgreSQL]
+- id: only_relevant_evidence_selected
+  job:
+    required_skills: [Python]
+    preferred_skills: [Docker]
+  expected:
+    required_coverage: 1.0
+    preferred_coverage: 1.0
+    matched: [Python, Docker]
+    unsupported: []
+    selected_skills: [Python, Docker]
+- id: no_required_skills
+  job:
+    preferred_skills: [Docker]
+  expected:
+    required_coverage: null
+    preferred_coverage: 1.0
+    matched: [Docker]
+    unsupported: []
+    selected_skills: [Docker]

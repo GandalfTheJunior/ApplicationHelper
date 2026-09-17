@@ -1,0 +1,263 @@
+{
+  "$defs": {
+    "Alignment": {
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "enum": [
+            "aligned",
+            "not_aligned",
+            "unknown",
+            "not_applicable"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "reason": {
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "status",
+        "reason"
+      ],
+      "title": "Alignment",
+      "type": "object"
+    },
+    "CandidateEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "skill",
+            "language"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "level": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Level"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "minItems": 1,
+          "title": "Evidence",
+          "type": "array"
+        }
+      },
+      "required": [
+        "kind",
+        "name",
+        "evidence"
+      ],
+      "title": "CandidateEvidence",
+      "type": "object"
+    },
+    "Evidence": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "work_experience",
+            "project",
+            "education",
+            "certification",
+            "self_report"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "reference": {
+          "minLength": 1,
+          "title": "Reference",
+          "type": "string"
+        },
+        "description": {
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "reference",
+        "description"
+      ],
+      "title": "Evidence",
+      "type": "object"
+    },
+    "RequirementMatch": {
+      "additionalProperties": false,
+      "properties": {
+        "category": {
+          "enum": [
+            "required_skill",
+            "preferred_skill",
+            "language"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "requirement": {
+          "minLength": 1,
+          "title": "Requirement",
+          "type": "string"
+        },
+        "level": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Level"
+        },
+        "status": {
+          "enum": [
+            "matched",
+            "partial",
+            "unsupported"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "reason": {
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "evidence_ids": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "category",
+        "requirement",
+        "status",
+        "reason"
+      ],
+      "title": "RequirementMatch",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "required_skill_coverage": {
+      "anyOf": [
+        {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Required Skill Coverage"
+    },
+    "preferred_skill_coverage": {
+      "anyOf": [
+        {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Preferred Skill Coverage"
+    },
+    "language_coverage": {
+      "anyOf": [
+        {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Language Coverage"
+    },
+    "experience_alignment": {
+      "$ref": "#/$defs/Alignment"
+    },
+    "location_alignment": {
+      "$ref": "#/$defs/Alignment"
+    },
+    "matched_requirements": {
+      "items": {
+        "$ref": "#/$defs/RequirementMatch"
+      },
+      "title": "Matched Requirements",
+      "type": "array"
+    },
+    "partially_matched_requirements": {
+      "items": {
+        "$ref": "#/$defs/RequirementMatch"
+      },
+      "title": "Partially Matched Requirements",
+      "type": "array"
+    },
+    "unsupported_requirements": {
+      "items": {
+        "$ref": "#/$defs/RequirementMatch"
+      },
+      "title": "Unsupported Requirements",
+      "type": "array"
+    },
+    "relevant_candidate_evidence": {
+      "items": {
+        "$ref": "#/$defs/CandidateEvidence"
+      },
+      "title": "Relevant Candidate Evidence",
+      "type": "array"
+    }
+  },
+  "required": [
+    "experience_alignment",
+    "location_alignment"
+  ],
+  "title": "MatchResult",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

@@ -1,0 +1,16 @@
+target_roles:
+  - Backend Developer
+preferred_locations:
+  - Example City
+remote_preference: remote
+employment_types:
+  - full-time
+salary_expectations:
+  minimum: 50000
+  maximum: 70000
+  currency: EUR
+  period: year
+industries:
+  - Example analytics
+excluded_companies:
+  - Example Excluded Company

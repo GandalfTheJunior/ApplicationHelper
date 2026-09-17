@@ -1,0 +1,31 @@
+.env
+.env.*
+!.env.example
+.venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.coverage
+htmlcov/
+.DS_Store
+
+# Privacy: accidental personal profiles and application artifacts must stay local.
+private/
+data/
+applications/
+application-history/
+documents/
+.career-agent/
+profile.yaml
+career.yaml
+identity.yaml
+preferences.yaml
+*.pdf
+*.docx
+*.pem
+*.key
+# Fictional *.example.yaml files in examples/ remain tracked.

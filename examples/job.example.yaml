@@ -1,0 +1,21 @@
+company: Example Hiring GmbH
+title: Backend Developer
+location: Example City
+remote_status: remote
+source_url: https://jobs.example.invalid/backend-developer
+description: A fictional role building backend analytics APIs.
+responsibilities:
+  - Build and maintain backend APIs.
+  - Develop database queries for reporting.
+required_skills:
+  - Python
+  - PostgreSQL
+preferred_skills:
+  - Docker
+  - Kubernetes
+  - AWS
+language_requirements:
+  - name: English
+    level: B2
+seniority: mid-level
+employment_type: full-time
