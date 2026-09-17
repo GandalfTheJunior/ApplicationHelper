@@ -39,3 +39,15 @@ def test_requirement_in_both_categories_does_not_duplicate_evidence(
         JobPosting(required_skills=["Python"], preferred_skills=["python"]), career
     )
     assert len(selected) == 1
+
+
+def test_selected_skill_preserves_level_and_years(career: Career) -> None:
+    selected = select_evidence(JobPosting(required_skills=["Python"]), career)
+    assert selected[0].level == "advanced"
+    assert selected[0].years == 4
+
+
+def test_zero_years_is_preserved(career: Career) -> None:
+    career.skills[0].years = 0
+    selected = select_evidence(JobPosting(required_skills=["Python"]), career)
+    assert selected[0].years == 0

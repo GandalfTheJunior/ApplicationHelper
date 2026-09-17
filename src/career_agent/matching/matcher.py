@@ -1,6 +1,6 @@
 from career_agent.domain.base import normalize
 from career_agent.domain.candidate import Career, Preferences
-from career_agent.domain.job import JobPosting
+from career_agent.domain.job import JobPosting, job_fingerprint
 from career_agent.domain.matching import (
     Alignment,
     Category,
@@ -92,6 +92,7 @@ def match_job(
         )
 
     return MatchResult(
+        job_fingerprint=job_fingerprint(job),
         required_skill_coverage=coverage("required_skill"),
         preferred_skill_coverage=coverage("preferred_skill"),
         language_coverage=coverage("language"),

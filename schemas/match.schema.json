@@ -55,6 +55,19 @@
           "default": null,
           "title": "Level"
         },
+        "years": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Years"
+        },
         "evidence": {
           "items": {
             "$ref": "#/$defs/Evidence"
@@ -176,6 +189,11 @@
   },
   "additionalProperties": false,
   "properties": {
+    "job_fingerprint": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Job Fingerprint",
+      "type": "string"
+    },
     "required_skill_coverage": {
       "anyOf": [
         {
@@ -254,6 +272,7 @@
     }
   },
   "required": [
+    "job_fingerprint",
     "experience_alignment",
     "location_alignment"
   ],

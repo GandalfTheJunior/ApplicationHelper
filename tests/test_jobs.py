@@ -46,3 +46,31 @@ def test_invalid_job_reports_safe_error(tmp_path: Path) -> None:
 def test_invalid_job_fields(payload: dict[str, object]) -> None:
     with pytest.raises(ValidationError):
         JobPosting.model_validate(payload)
+
+
+@pytest.mark.parametrize(
+    ("required", "preferred"),
+    [
+        ("Python", "PYTHON"),
+        (" Python ", "python  "),
+        ("Machine  Learning", "machine\tlearning"),
+    ],
+)
+def test_required_skills_take_precedence_without_reordering(
+    required: str, preferred: str
+) -> None:
+    job = JobPosting(
+        required_skills=[required, "PostgreSQL"],
+        preferred_skills=["Docker", preferred, "AWS", "docker"],
+    )
+    assert job.required_skills == [required.strip(), "PostgreSQL"]
+    assert job.preferred_skills == ["Docker", "AWS"]
+    assert JobPosting.model_validate_json(job.model_dump_json()) == job
+
+
+def test_category_precedence_applies_on_assignment() -> None:
+    job = JobPosting(preferred_skills=["Python", "Docker"])
+    job.required_skills = ["PYTHON"]
+    assert job.preferred_skills == ["Docker"]
+    job.preferred_skills = ["AWS", " python ", "Docker"]
+    assert job.preferred_skills == ["AWS", "Docker"]

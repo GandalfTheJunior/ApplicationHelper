@@ -14,6 +14,7 @@ class CandidateEvidence(Model):
     kind: Literal["skill", "language"]
     name: Text
     level: Text | None = None
+    years: float | None = Field(default=None, ge=0, allow_inf_nan=False)
     evidence: list[Evidence] = Field(min_length=1)
 
 
@@ -32,6 +33,7 @@ class Alignment(Model):
 
 
 class MatchResult(Model):
+    job_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
     required_skill_coverage: float | None = Field(default=None, ge=0, le=1)
     preferred_skill_coverage: float | None = Field(default=None, ge=0, le=1)
     language_coverage: float | None = Field(default=None, ge=0, le=1)

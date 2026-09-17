@@ -1,5 +1,43 @@
 {
   "$defs": {
+    "Achievement": {
+      "additionalProperties": false,
+      "description": "Recorded candidate data; descriptions and tags are not matched as skills.",
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "description": {
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "skill_names": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Skill Names",
+          "type": "array"
+        },
+        "tags": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Tags",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "description"
+      ],
+      "title": "Achievement",
+      "type": "object"
+    },
     "Certification": {
       "additionalProperties": false,
       "properties": {
@@ -251,6 +289,39 @@
             "type": "string"
           },
           "title": "Responsibilities",
+          "type": "array"
+        },
+        "start_period": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start Period"
+        },
+        "end_period": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "End Period"
+        },
+        "achievements": {
+          "items": {
+            "$ref": "#/$defs/Achievement"
+          },
+          "title": "Achievements",
           "type": "array"
         }
       },

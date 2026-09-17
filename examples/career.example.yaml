@@ -30,9 +30,16 @@ work_experience:
   - id: example-systems
     employer: Example Systems GmbH
     title: Backend Developer
+    start_period: "2020-01"
+    end_period: "2024-12"
     description: Worked on fictional internal analytics services.
     responsibilities:
       - Developed reporting queries.
+    achievements:
+      - id: example-reporting-queries
+        description: Delivered PostgreSQL reporting queries for the fictional analytics service.
+        skill_names: [PostgreSQL]
+        tags: [internal-reporting]
 projects:
   - id: example-analytics-platform
     name: Example Analytics Platform

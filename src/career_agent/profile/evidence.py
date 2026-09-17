@@ -18,7 +18,13 @@ def select_evidence(job: JobPosting, career: Career) -> list[CandidateEvidence]:
     }
     language_names = {normalize(item.name) for item in job.language_requirements}
     result = [
-        CandidateEvidence(kind="skill", name=skill.name, evidence=skill.evidence)
+        CandidateEvidence(
+            kind="skill",
+            name=skill.name,
+            level=skill.level,
+            years=skill.years,
+            evidence=skill.evidence,
+        )
         for skill in career.skills
         if normalize(skill.name) in skill_names
     ]

@@ -23,12 +23,33 @@ class Skill(Model):
     evidence: list[Evidence] = Field(min_length=1)
 
 
+class Achievement(Model):
+    """Recorded candidate data; descriptions and tags are not matched as skills."""
+
+    id: Text
+    description: Text
+    skill_names: list[Text] = Field(default_factory=list)
+    tags: list[Text] = Field(default_factory=list)
+
+
 class WorkExperience(Model):
     id: Text
     employer: Text
     title: Text
     description: Text | None = None
     responsibilities: list[Text] = Field(default_factory=list)
+    # Preserve the precision the candidate supplies; do not infer dates/tenure.
+    start_period: Text | None = None
+    end_period: Text | None = None
+    achievements: list[Achievement] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def unique_achievement_ids(self) -> Self:
+        if len({item.id for item in self.achievements}) != len(self.achievements):
+            raise ValueError(
+                "Achievement IDs must be unique within each work experience"
+            )
+        return self
 
 
 class Project(Model):

@@ -1,8 +1,10 @@
 """Structured posting input for the bootstrap YAML parser."""
 
-from typing import Literal
+import hashlib
+import json
+from typing import Literal, Self
 
-from pydantic import Field, HttpUrl, field_validator
+from pydantic import Field, HttpUrl, field_validator, model_validator
 
 from career_agent.domain.base import Model, Text, normalize
 
@@ -35,6 +37,22 @@ class JobPosting(Model):
             unique.setdefault(normalize(value), value)
         return list(unique.values())
 
+    @model_validator(mode="after")
+    def required_skills_take_precedence(self) -> Self:
+        required = {normalize(skill) for skill in self.required_skills}
+        # Values already passed field validation. Avoid recursive assignment
+        # validation while enforcing this invariant on creation and assignment.
+        object.__setattr__(
+            self,
+            "preferred_skills",
+            [
+                skill
+                for skill in self.preferred_skills
+                if normalize(skill) not in required
+            ],
+        )
+        return self
+
     @field_validator("language_requirements")
     @classmethod
     def unique_languages(
@@ -43,3 +61,20 @@ class JobPosting(Model):
         if len({normalize(value.name) for value in values}) != len(values):
             raise ValueError("Language requirements must have unique names")
         return values
+
+
+def job_fingerprint(job: JobPosting) -> str:
+    """SHA-256 of the complete validated posting in canonical UTF-8 JSON.
+
+    Include defaults and all job fields, even those omitted from generation
+    contexts. Preserve the validated text and list order. No candidate data,
+    timestamps, object identity, or process-randomized hash() is involved.
+    """
+    serialized = json.dumps(
+        job.model_dump(mode="json"),
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=False,
+        allow_nan=False,
+    )
+    return hashlib.sha256(serialized.encode("utf-8")).hexdigest()

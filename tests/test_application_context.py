@@ -21,9 +21,11 @@ def test_context_has_only_relevant_facts_and_no_identity(
         "email",
         "phone",
         "address",
-        "years",
         "education",
         "certifications",
+        "start_period",
+        "end_period",
+        "achievements",
     ):
         assert field not in encoded
     assert "FastAPI" not in encoded
@@ -78,9 +80,70 @@ def test_context_rejects_match_for_different_requirements(
     career: Career, job: JobPosting
 ) -> None:
     match = match_job(job, career)
-    with pytest.raises(ValueError, match="do not correspond"):
+    with pytest.raises(ValueError, match="does not belong"):
         build_application_context(
             JobPosting(required_skills=["AWS"]),
             match,
             match.relevant_candidate_evidence,
         )
+
+
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("company", "Different Example Company"),
+        ("title", "Different Example Role"),
+        ("description", "Different job description with identical requirements."),
+        ("source_url", "https://jobs.example.invalid/different-posting"),
+    ],
+)
+def test_context_rejects_different_job_with_identical_requirements(
+    career: Career, job: JobPosting, field: str, value: str
+) -> None:
+    match = match_job(job, career)
+    data = job.model_dump(mode="json")
+    data[field] = value
+    different_job = JobPosting.model_validate(data)
+    with pytest.raises(ValueError, match="does not belong"):
+        build_application_context(
+            different_job, match, match.relevant_candidate_evidence
+        )
+
+
+def test_context_accepts_same_job_after_json_round_trip(
+    career: Career, job: JobPosting
+) -> None:
+    match = match_job(job, career)
+    reconstructed = JobPosting.model_validate_json(job.model_dump_json())
+    context = build_application_context(
+        reconstructed, match, match.relevant_candidate_evidence
+    )
+    assert context["job"]["company"] == job.company
+
+
+def test_context_contains_metadata_only_for_selected_skills(
+    career: Career, job: JobPosting
+) -> None:
+    career.skills[1].level = "unrelated-skill-level"
+    career.skills[1].years = 123.5
+    match = match_job(job, career)
+    context = build_application_context(job, match, match.relevant_candidate_evidence)
+    python = next(
+        fact for fact in context["candidate_evidence"] if fact["name"] == "Python"
+    )
+    assert python["level"] == "advanced"
+    assert python["years"] == 4
+    serialized = json.dumps(context)
+    assert "FastAPI" not in serialized
+    assert "unrelated-skill-level" not in serialized
+    assert "123.5" not in serialized
+    docker = next(
+        fact for fact in context["candidate_evidence"] if fact["name"] == "Docker"
+    )
+    assert "level" not in docker
+    assert "years" not in docker
+    english = next(
+        fact for fact in context["candidate_evidence"] if fact["name"] == "English"
+    )
+    assert english["level"] == "B2"
+    assert "years" not in english

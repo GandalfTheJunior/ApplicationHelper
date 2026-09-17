@@ -66,6 +66,25 @@ def test_empty_career_and_empty_posting() -> None:
     assert result.matched_requirements == []
 
 
+def test_required_preferred_overlap_is_counted_only_as_required(career: Career) -> None:
+    job = JobPosting(required_skills=["  PYTHON  "], preferred_skills=["python", "AWS"])
+    result = match_job(job, career)
+    assert result.required_skill_coverage == 1
+    assert result.preferred_skill_coverage == 0
+    assert [
+        (item.category, item.requirement) for item in result.matched_requirements
+    ] == [("required_skill", "PYTHON")]
+    assert [item.requirement for item in result.unsupported_requirements] == ["AWS"]
+
+
+def test_only_overlapping_preferred_skills_means_not_applicable(career: Career) -> None:
+    result = match_job(
+        JobPosting(required_skills=["Python"], preferred_skills=[" python "]), career
+    )
+    assert result.required_skill_coverage == 1
+    assert result.preferred_skill_coverage is None
+
+
 @pytest.mark.parametrize(
     ("language", "level", "status"),
     [

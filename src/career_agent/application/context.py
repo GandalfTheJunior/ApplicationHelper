@@ -1,6 +1,6 @@
 from career_agent.domain.base import normalize
 from career_agent.domain.candidate import Identity
-from career_agent.domain.job import JobPosting
+from career_agent.domain.job import JobPosting, job_fingerprint
 from career_agent.domain.matching import CandidateEvidence, MatchResult
 from career_agent.jobs.analyzer import analyze_job
 
@@ -17,6 +17,8 @@ def build_application_context(
     Passing identity is an explicit opt-in for a future final artifact renderer.
     This function performs no loading, storage, or network communication.
     """
+    if match.job_fingerprint != job_fingerprint(job):
+        raise ValueError("MatchResult does not belong to the supplied job")
     requirements = (
         match.matched_requirements
         + match.partially_matched_requirements

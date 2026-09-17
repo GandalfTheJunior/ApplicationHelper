@@ -135,6 +135,19 @@ Matching trusts the explicit association between a declared skill/language and
 its evidence. It does not verify the truth of user data or infer skill names from
 prose, projects or certificates. Unsupported skills must never be inferred.
 
+Work experience also supports optional `start_period` and `end_period` text
+fields plus an `achievements` list. Periods preserve the candidate's supplied
+precision: use quoted strings such as `"2020"`, `"2020-01"` or `"2020-01-15"`.
+They are stored as text, not parsed or used to calculate tenure. An omitted end
+period means unspecified; it does not establish that employment is current.
+Existing work records remain valid without these new fields.
+
+Each achievement has an `id`, `description`, and optional `skill_names` and
+`tags` lists. IDs must be unique within a work record. The fictional example
+shows a reporting achievement linked to PostgreSQL. Achievements and their tags
+are stored data only: they do not create skill matches, establish additional
+evidence, or enter the application context automatically.
+
 `examples/identity.example.yaml` demonstrates the separate optional identity
 fields; `{}` is a valid identity. `examples/preferences.example.yaml` contains
 target roles, locations, remote preference, employment types, optional salary
@@ -183,6 +196,26 @@ PostgreSQL, Docker and English; it excludes unrelated FastAPI evidence,
 education, certifications and identity. `context` returns the selected facts,
 structured job, unsupported/partial requirements and explicit limitations.
 It excludes the original job description and source URL as unnecessary context.
+Selected skills retain their recorded `level` and `years` when supplied: Python
+includes `"level": "advanced"` and `"years": 4.0`. Missing metadata is omitted
+from the context, and unrelated skills and their metadata remain excluded.
+
+## Job provenance
+
+Every `MatchResult` carries a required `job_fingerprint`: SHA-256 of the complete
+validated `JobPosting` serialized as UTF-8 JSON with sorted object keys, compact
+separators, and all default/null fields included. Normalization comes from model
+validation (including trimmed strings and deduplicated skills); validated text
+and list order are preserved. Input mapping order and omitted versus explicit
+defaults do not change the fingerprint. No candidate data or Python `hash()` is
+used, so results are stable across processes.
+
+The context builder verifies this fingerprint before using the match. A changed
+company, title, description, source URL or other job field is rejected even when
+the structured requirements are identical. Existing requirement consistency
+checks also remain in place. Old serialized matches without a fingerprint must
+be regenerated. This detects accidental job/result mix-ups; it is not a digital
+signature or protection against deliberate modification of both objects.
 
 ## Deterministic rules
 
@@ -190,8 +223,12 @@ It excludes the original job description and source URL as unnecessary context.
   within that category. Language coverage uses the same formula. With no
   requirements in a category, coverage is `null` (not applicable).
 - Case and whitespace are normalized. Punctuation is preserved, so C and C++
-  remain different. Duplicate job skills are counted once in their original
-  order. There is no synonym expansion, adjacency inference or aggregate score.
+  remain different. Duplicate job skills are counted once, with required skills
+  taking precedence: their normalized duplicates are removed from preferred
+  skills before analysis or matching. Each category retains its first occurrence
+  order and spelling. If all preferred skills overlap with required skills,
+  preferred coverage is `null`. There is no synonym expansion, adjacency
+  inference or aggregate score.
 - Docker does not count as Kubernetes. A missing preferred skill does not reject
   the job; there is no automatic pass/fail hiring decision.
 - Languages match by name and, when supplied, exact proficiency label. A known
@@ -202,6 +239,8 @@ It excludes the original job description and source URL as unnecessary context.
   and never treats remote status as permission to work from anywhere.
 - Evidence retrieval returns only declared facts whose names match structured
   requirements. Evidence descriptions are retained verbatim; keep them focused.
+  Selected skill levels and years are copied as supplied, never inferred from
+  work periods, achievement text, or tags.
 
 ## Tests, evaluations and schemas
 
@@ -210,6 +249,8 @@ pytest
 ruff check .
 ruff format --check .
 python scripts/generate_schemas.py
+# After committing intended schema changes, this must show no schema drift:
+git diff --exit-code -- schemas/
 ```
 
 Tests isolate profile storage in temporary directories. They never need or read
@@ -221,6 +262,14 @@ JSON schemas are generated from Pydantic models and tested for drift.
 `candidate.schema.json` describes **career data only**, not identity. Cross-record
 evidence consistency checks live in Pydantic validators and cannot all be
 expressed in JSON Schema; use Python loading for full validation.
+
+GitHub Actions runs on pushes and pull requests using Python 3.12. The workflow
+installs `.[dev]`, runs pytest and both Ruff checks, regenerates schemas, and
+requires the entire working tree to remain unchanged (including no new untracked
+files). It uses read-only repository permissions, pinned action revisions, and
+no external secrets or package publishing. Commit regenerated schemas alongside
+model changes so CI can check for drift. Additional regression tests cover job
+provenance, selected metadata, category precedence and the new career fields.
 
 ## Limitations and next steps
 
